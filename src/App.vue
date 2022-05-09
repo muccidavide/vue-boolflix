@@ -17,7 +17,7 @@
             <li>{{ movie.original_title }}</li>
             <li>{{ movie.original_language }}</li>
             <li>{{ movie.vote_average }}</li>
-            <img :src="renderFlag(movie)" alt="" />
+            <img :src="renderFlag(movie)" @error="setAlternativeImg" alt="" />
           </ul>
         </li>
       </ul>
@@ -30,7 +30,7 @@
             <li>{{ serie.original_name }}</li>
             <li>{{ serie.original_language }}</li>
             <li>{{ serie.vote_average }}</li>
-            <img :src="renderFlag(serie)" alt="" />
+            <img :src="renderFlag(serie)" @error="setAlternativeImg" :alt="serie.original_language" />
           </ul>
         </li>
       </ul>
@@ -59,12 +59,13 @@ export default {
   methods: {
     callApi() {
       if (this.filmSearched !== "") {
+        /* Get Searched Movies */
         let moviesUrl = `${this.searchMovieApi}&query=${this.filmSearched}`;
         axios.get(moviesUrl).then((movie) => {
           this.movies = movie.data.results;
           return this.movies;
         });
-
+        /* Get Searched Movies */
         let seriesUrl = `${this.searchSeriesApi}&query=${this.filmSearched}`;
         axios.get(seriesUrl).then((movie) => {
           this.series = movie.data.results;
@@ -72,15 +73,18 @@ export default {
         });
       }
     },
-    renderFlag(movie) {
-      if (movie.original_language !== "en") {
-        let flag = this.countryFlag + movie.original_language;
+    renderFlag(movie_serie) {
+      if (movie_serie.original_language !== "en") {
+        let flag = this.countryFlag + movie_serie.original_language;
         return flag;
       } else {
         let flag = this.countryFlag + "gb";
         return flag;
       }
     },
+    setAlternativeImg(event){
+      return event.target.src = "https://upload.wikimedia.org/wikipedia/commons/d/d4/World_Flag_%282004%29.svg"
+    }
   },
   /*   mounted(){
     this.callApi()
@@ -90,4 +94,14 @@ export default {
 
 <style lang="scss">
 @import "@/assets/scss/style.scss";
+
+ul{
+  li{
+    ul{
+      img{
+        max-width: 320px;
+      }
+    }
+  }
+}
 </style>
