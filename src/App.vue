@@ -13,11 +13,12 @@
           <ul>
             <li>
               <h3>{{ movie.title }}</h3>
+              <img class="poster" :src="getPoster(movie)" @error="setAlternativePoster" :alt="movie.title">
             </li>
             <li>{{ movie.original_title }}</li>
             <li>{{ movie.original_language }}</li>
             <li>{{ movie.vote_average }}</li>
-            <img :src="renderFlag(movie)" @error="setAlternativeImg" alt="" />
+            <img class="flag" :src="renderFlag(movie)" @error="setAlternativeImg" alt="" />
           </ul>
         </li>
       </ul>
@@ -26,11 +27,12 @@
           <ul>
             <li>
               <h3>{{ serie.name }}</h3>
+              <img class="poster" :src="getPoster(serie)" @error="setAlternativePoster" :alt="serie.title">
             </li>
             <li>{{ serie.original_name }}</li>
             <li>{{ serie.original_language }}</li>
             <li>{{ serie.vote_average }}</li>
-            <img :src="renderFlag(serie)" @error="setAlternativeImg" :alt="serie.original_language" />
+            <img class="flag" :src="renderFlag(serie)" @error="setAlternativeImg" :alt="serie.title" />
           </ul>
         </li>
       </ul>
@@ -51,9 +53,11 @@ export default {
         "https://api.themoviedb.org/3/search/movie?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
       searchSeriesApi:
         "https://api.themoviedb.org/3/search/tv?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
+      
       movies: [],
       series: [],
       countryFlag: "https://countryflagsapi.com/png/",
+      posterSize: "w154/"
     };
   },
   methods: {
@@ -84,6 +88,14 @@ export default {
     },
     setAlternativeImg(event){
       return event.target.src = "https://upload.wikimedia.org/wikipedia/commons/d/d4/World_Flag_%282004%29.svg"
+    },
+     setAlternativePoster(event){
+      return event.target.src = "https://publications.iarc.fr/uploads/media/default/0001/02/thumb_1196_default_publication.jpeg"
+    },
+    getPoster(movie_serie){
+      let movieDBUrl = "https://image.tmdb.org/t/p/"
+      let poster = movieDBUrl + this.posterSize + movie_serie.poster_path
+      return poster
     }
   },
   /*   mounted(){
@@ -96,10 +108,13 @@ export default {
 @import "@/assets/scss/style.scss";
 
 ul{
-  li{
-    ul{
-      img{
-        max-width: 320px;
+  li{ 
+    .poster{
+      max-width: 154px;
+    }
+    ul{ 
+      .flag{
+        max-width: 160px;
       }
     }
   }
