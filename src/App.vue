@@ -9,12 +9,13 @@
       />
       <button type="button" @click="callApi">Search</button>
       <ul>
-        <li v-for="movie in movies" :key="movie.title">
+        <li v-for="movie in movies" :key="movie.id">
           <ul>
-            <lh><h3>{{movie.title}}</h3></lh>
+            <li><h3>{{movie.title}}</h3></li>
             <li>{{movie.original_title}}</li>
             <li>{{movie.original_language}}</li>
             <li>{{movie.vote_average}}</li>
+            <img :src="'https://countryflagsapi.com/png/'+ movie.original_language" alt="">
           </ul>
         </li>
       </ul>
@@ -35,6 +36,7 @@ export default {
         "https://api.themoviedb.org/3/search/movie?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
       new_url:"",
       movies: [],
+      countryFlag: "https://countryflagsapi.com/png/",
     };
   },
   methods: {
@@ -45,12 +47,12 @@ export default {
       axios.get(callUrl).then(movie =>{
       this.movies = movie.data.results
       return this.movies
-      });
-        
+      }); 
       }
 
     },
   },
+  
 /*   mounted(){
     this.callApi()
   } */
