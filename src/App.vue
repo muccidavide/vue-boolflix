@@ -7,7 +7,7 @@
         name="film_search"
         id="film_search"
       />
-      <button type="button" class="btn btn-primary">Search</button>
+      <button type="button" @click="callApi">Search</button>
     </div>
   </div>
 </template>
@@ -24,25 +24,27 @@ export default {
       api_url:
         "https://api.themoviedb.org/3/search/movie?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
       new_url:"",
-      movies:[],
+      movies: [],
     };
   },
   methods: {
     callApi() {
-      if (this.movies !== undefined && this.movies !== null && this.movies !== "") {
-              axios.get(`${this.api_url}&query=${this.filmSearched}`).then(movie =>{
-        console.log(movie);
-        return this.movies = movie.data.results
+      console.log(this.filmSearched);
+      if (this.filmSearched !== "") {
+      let callUrl = `${this.api_url}&query=${this.filmSearched}` 
+      axios.get(callUrl).then(movie =>{
 
+      this.movies = movie.data.results
+      return this.movies
       });
+        
       }
 
     },
-
   },
-    mounted() {
-    this.callApi();
-  },
+/*   mounted(){
+    this.callApi()
+  } */
 };
 </script>
 
