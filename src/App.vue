@@ -14,10 +14,10 @@
             <li>
               <h3>{{ movie.title }}</h3>
               <img class="poster" :src="getPoster(movie)" @error="setAlternativePoster" :alt="movie.title">
-            </li>
             <li>{{ movie.original_title }}</li>
             <li>{{ movie.original_language }}</li>
-            <li>{{ movie.vote_average }}</li>
+            <!-- icone -->
+            <li><font-awesome-icon v-for="n in ratingToStars(movie)" :key="n" icon="fa-solid fa-star"/></li>
             <img class="flag" :src="renderFlag(movie)" @error="setAlternativeImg" alt="" />
           </ul>
         </li>
@@ -31,7 +31,8 @@
             </li>
             <li>{{ serie.original_name }}</li>
             <li>{{ serie.original_language }}</li>
-            <li>{{ serie.vote_average }}</li>
+            <!-- icone -->
+            <li><font-awesome-icon  v-for="n in ratingToStars(serie)" :key="n" icon="fa-solid fa-star"/></li>
             <img class="flag" :src="renderFlag(serie)" @error="setAlternativeImg" :alt="serie.title" />
           </ul>
         </li>
@@ -57,7 +58,8 @@ export default {
       movies: [],
       series: [],
       countryFlag: "https://countryflagsapi.com/png/",
-      posterSize: "w154/"
+      posterSize: "w154/",
+      stars:[],
     };
   },
   methods: {
@@ -96,11 +98,15 @@ export default {
       let movieDBUrl = "https://image.tmdb.org/t/p/"
       let poster = movieDBUrl + this.posterSize + movie_serie.poster_path
       return poster
+    },
+    ratingToStars(movie_serie){
+      let movieStars =  Math.ceil(movie_serie.vote_average/2)
+      console.log(movieStars);
+      this.stars.length = movieStars
+
+      return this.stars
     }
   },
-  /*   mounted(){
-    this.callApi()
-  } */
 };
 </script>
 
