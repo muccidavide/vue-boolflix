@@ -8,6 +8,16 @@
         id="film_search"
       />
       <button type="button" @click="callApi">Search</button>
+      <ul>
+        <li v-for="movie in movies" :key="movie.title">
+          <ul>
+            <lh><h3>{{movie.title}}</h3></lh>
+            <li>{{movie.original_title}}</li>
+            <li>{{movie.original_language}}</li>
+            <li>{{movie.vote_average}}</li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -33,7 +43,6 @@ export default {
       if (this.filmSearched !== "") {
       let callUrl = `${this.api_url}&query=${this.filmSearched}` 
       axios.get(callUrl).then(movie =>{
-
       this.movies = movie.data.results
       return this.movies
       });
@@ -50,4 +59,6 @@ export default {
 
 <style lang="scss">
 @import "@/assets/scss/style.scss";
+
+
 </style>
