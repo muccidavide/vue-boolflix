@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <header>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col">
+      <div class="container-fluid align-items-center">
+        <div class="row h-100">
+          <div class="col d-flex align-items-center">
             <div class="logo">
               <img src="./assets/img/netflix_logo_1.webp" alt="netflix logo" />
             </div>
@@ -16,7 +16,9 @@
                 name="film_search"
                 id="film_search"
               />
-              <button type="button" @click="callApi">Search</button>
+              <button class="btn_search" type="button" @click="callApi">
+                Search
+              </button>
             </div>
           </div>
         </div>
@@ -44,7 +46,7 @@
 
                   <p>{{ movie.original_title }}</p>
                   <p>{{ movie.original_language }}</p>
-                  <font-awesome-icon
+                  <font-awesome-icon class="text-warning"
                     v-for="n in ratingToStars(movie)"
                     :key="n"
                     icon="fa-solid fa-star"
@@ -143,11 +145,22 @@ export default {
       }
     },
     renderFlag(movie_serie) {
-      if (movie_serie.original_language !== "en") {
-        let flag = this.countryFlag + movie_serie.original_language;
+      if (movie_serie.original_language === "en") {
+                let flag = this.countryFlag + "gb";
         return flag;
-      } else {
-        let flag = this.countryFlag + "gb";
+
+      } else if (movie_serie.original_language === "ja"){
+        let flag = this.countryFlag + "jp";
+        return flag;
+      }else if (movie_serie.original_language === "zh"){
+        let flag = this.countryFlag + "cn";
+        return flag;
+      }else if (movie_serie.original_language === "ko"){
+        let flag = this.countryFlag + "kr";
+        return flag;
+      }
+       else {
+                let flag = this.countryFlag + movie_serie.original_language;
         return flag;
       }
     },
@@ -182,17 +195,38 @@ export default {
 
 header {
   background-color: $nf-background-primary;
-  .logo {
-    width: 130px;
+  height: 100px;
+
+  .container-fluid {
+    height: 100%;
+    .logo {
+      width: 150px;
+    }
+    #film_search {
+      border-radius: 2px;
+      border: none;
+      padding: 2px 0.2rem;
+      min-width: 15rem;
+    }
+    .btn_search {
+      border: none;
+      padding: 2px 9px;
+      border-radius: 3px;
+
+      margin-left: 2px;
+    }
   }
 }
 main {
   background-color: $nf-background-primary;
   color: $nf-text-secondary;
+  min-height: calc(100vh - 100px);
   .col_10 {
     width: calc(100% / 10);
     .card_movie {
-      height: 100%;
+      height: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       .poster {
         text-align: center;
         height: 100%;
@@ -215,10 +249,12 @@ main {
     }
 
     .card_series {
-      height: 100%;
+      height: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       .poster {
-        text-align: center;
         height: 100%;
+        text-align: center;
         img {
           height: 100%;
           width: 100%;
@@ -233,7 +269,7 @@ main {
     .card_series:hover .series_details {
       display: block;
     }
-        .card_series:hover .poster {
+    .card_series:hover .poster {
       display: none;
     }
 

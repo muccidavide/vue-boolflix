@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 
+import "@fontsource/bebas-neue"
+
 /* Font Awesome icons*/
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
