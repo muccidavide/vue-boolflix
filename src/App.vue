@@ -42,21 +42,28 @@
                 </div>
 
                 <div class="movie_details">
-                  <h4>{{ movie.title }}</h4>
+                  <div class="movie_title">
+                    <h5>{{ movie.title }}</h5>
+                  </div>
+                  <div class="movie_ratings">
+                    <font-awesome-icon
+                      class="text-warning"
+                      v-for="n in ratingToStars(movie)"
+                      :key="n"
+                      icon="fa-solid fa-star"
+                    />
+                    <img
+                      class="flag ms-2"
+                      :src="renderFlag(movie)"
+                      @error="setAlternativeImg"
+                      alt=""
+                    />
+                  </div>
 
-                  <p>{{ movie.original_title }}</p>
-                  <p>{{ movie.original_language }}</p>
-                  <font-awesome-icon class="text-warning"
-                    v-for="n in ratingToStars(movie)"
-                    :key="n"
-                    icon="fa-solid fa-star"
-                  />
-                  <img
-                    class="flag"
-                    :src="renderFlag(movie)"
-                    @error="setAlternativeImg"
-                    alt=""
-                  />
+                  <!-- <p>{{ movie.original_title }}</p> -->
+                  <div class="movie_overview">
+                    <p>{{ movie.overview }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -79,21 +86,26 @@
                     :alt="serie.title"
                   />
                 </div>
-                <div class="series_details">
+                <div class="serie_details">
                   <h4>{{ serie.name }}</h4>
-                  <p>{{ serie.original_name }}</p>
-                  <p>{{ serie.original_language }}</p>
-                  <font-awesome-icon
-                    v-for="n in ratingToStars(serie)"
-                    :key="n"
-                    icon="fa-solid fa-star"
-                  />
-                  <img
-                    class="flag"
-                    :src="renderFlag(serie)"
-                    @error="setAlternativeImg"
-                    :alt="serie.title"
-                  />
+                  <!--  <p>{{ serie.original_name }}</p> -->
+                  <div class="series_rating">
+                    <font-awesome-icon
+                      class="text-warning"
+                      v-for="n in ratingToStars(serie)"
+                      :key="n"
+                      icon="fa-solid fa-star"
+                    />
+                    <img
+                      class="flag ms-2"
+                      :src="renderFlag(serie)"
+                      @error="setAlternativeImg"
+                      :alt="serie.title"
+                    />
+                  </div>
+                  <div class="series_overview">
+                    <p>{{ serie.overview }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -146,21 +158,19 @@ export default {
     },
     renderFlag(movie_serie) {
       if (movie_serie.original_language === "en") {
-                let flag = this.countryFlag + "gb";
+        let flag = this.countryFlag + "gb";
         return flag;
-
-      } else if (movie_serie.original_language === "ja"){
+      } else if (movie_serie.original_language === "ja") {
         let flag = this.countryFlag + "jp";
         return flag;
-      }else if (movie_serie.original_language === "zh"){
+      } else if (movie_serie.original_language === "zh") {
         let flag = this.countryFlag + "cn";
         return flag;
-      }else if (movie_serie.original_language === "ko"){
+      } else if (movie_serie.original_language === "ko") {
         let flag = this.countryFlag + "kr";
         return flag;
-      }
-       else {
-                let flag = this.countryFlag + movie_serie.original_language;
+      } else {
+        let flag = this.countryFlag + movie_serie.original_language;
         return flag;
       }
     },
@@ -225,8 +235,7 @@ main {
     width: calc(100% / 10);
     .card_movie {
       height: 240px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+
       .poster {
         text-align: center;
         height: 100%;
@@ -237,7 +246,11 @@ main {
         }
       }
       .movie_details {
+        padding-bottom: 5px;
         display: none;
+        max-height: 240px;
+        overflow: auto;
+        text-overflow: ellipsis;
       }
     }
     .card_movie:hover .movie_details {
@@ -250,8 +263,6 @@ main {
 
     .card_series {
       height: 240px;
-      overflow: hidden;
-      text-overflow: ellipsis;
       .poster {
         height: 100%;
         text-align: center;
@@ -261,12 +272,16 @@ main {
           object-fit: cover;
         }
       }
-      .series_details {
+      .serie_details {
         display: none;
+        max-height: 240px;
+        text-overflow: ellipsis;
+        overflow-y: auto;
+
       }
     }
 
-    .card_series:hover .series_details {
+    .card_series:hover .serie_details {
       display: block;
     }
     .card_series:hover .poster {
@@ -274,7 +289,7 @@ main {
     }
 
     .flag {
-      max-width: 50px;
+      max-width: 30px;
     }
   }
 }
