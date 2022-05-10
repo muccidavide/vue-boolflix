@@ -9,7 +9,7 @@
             </div>
           </div>
           <div class="col d-flex align-items-center justify-content-end">
-            <div class="search_bar me-3">
+            <div class="search_bar me-3 d-flex align-items-center">
               <input
                 type="search"
                 v-model="filmSearched"
@@ -31,7 +31,7 @@
         <section class="movies">
           <h2>{{ movies.sectionTitle }}</h2>
           <div class="row mt-1 g-3">
-            <div class="col_10" v-for="movie in movies" :key="movie.id">
+            <div class="col_10" v-for="(movie,index) in movies" :key="movie.id + index">
               <div class="card_movie">
                 <div class="poster">
                   <img
@@ -41,7 +41,12 @@
                   />
                 </div>
 
-                <div class="movie_details">
+                <div
+                  class="movie_details"
+                  @dblclick="zoomIn"
+                  @mouseleave="zoomOut"
+                  :class="{ active: isZoomed }"
+                >
                   <div class="movie_title">
                     <h5>{{ movie.title }}</h5>
                   </div>
@@ -63,6 +68,10 @@
                   <!-- <p>{{ movie.original_title }}</p> -->
                   <div class="movie_overview">
                     <p>{{ movie.overview }}</p>
+                    <ul>
+                      <li v-for="actor in creditsFilms[index]" :key="actor.name">{{actor.name}} </li>
+                      
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -86,7 +95,12 @@
                     :alt="serie.title"
                   />
                 </div>
-                <div class="serie_details">
+                <div
+                  class="serie_details"
+                  @dblclick="zoomIn"
+                  @mouseleave="zoomOut"
+                  :class="{ active: isZoomed }"
+                >
                   <h4>{{ serie.name }}</h4>
                   <!--  <p>{{ serie.original_name }}</p> -->
                   <div class="series_rating">
@@ -105,6 +119,7 @@
                   </div>
                   <div class="series_overview">
                     <p>{{ serie.overview }}</p>
+                    
                   </div>
                 </div>
               </div>
@@ -129,12 +144,19 @@ export default {
         "https://api.themoviedb.org/3/search/movie?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
       searchSeriesApi:
         "https://api.themoviedb.org/3/search/tv?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
+      creditsMovieApi:
+        "https://api.themoviedb.org/3/movie/{movie_id}/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US",
+      creditsSerieApi:
+        "https://api.themoviedb.org/3/tv/{tv_id}/season/{season_number}/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US",
 
       movies: [],
       series: [],
       countryFlag: "https://countryflagsapi.com/png/",
       posterSize: "w154/",
       stars: [],
+      isZoomed: false,
+      creditsFilms:[],
+      creditsSeries:[]
     };
   },
   methods: {
@@ -145,14 +167,28 @@ export default {
         axios.get(moviesUrl).then((movie) => {
           this.movies = movie.data.results;
           this.movies.sectionTitle = "Films";
-          return this.movies;
+
+          return this.movies.forEach((movie) => {
+            let moviesCreditsUrl = `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US`;
+            axios.get(moviesCreditsUrl).then((credits) => {
+              this.creditsFilms.push(credits.data.cast.slice(0,3))
+            });
+          });
         });
+
         /* Get Searched Movies */
         let seriesUrl = `${this.searchSeriesApi}&query=${this.filmSearched}`;
         axios.get(seriesUrl).then((movie) => {
           this.series = movie.data.results;
           this.series.sectionTitle = "TV Series";
-          return this.series;
+
+          return this.series.forEach((serie) => {
+            let seriesCreditsUrl = `https://api.themoviedb.org/3/tv/${serie.id}/season/1/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US`;
+            axios.get(seriesCreditsUrl).then((credits) => {
+              this.creditsSeries.push(credits.data)
+            })
+            return this.series;
+          });
         });
       }
     },
@@ -193,8 +229,11 @@ export default {
       this.stars.length = movieStars;
       return this.stars;
     },
-    displayInfo(index) {
-      this.movies[index].active = false;
+    zoomIn() {
+      this.isZoomed = !this.isZoomed;
+    },
+    zoomOut() {
+      this.isZoomed = false;
     },
   },
 };
@@ -213,12 +252,14 @@ header {
       width: 150px;
     }
     #film_search {
+      height: 2.3rem;
       border-radius: 2px;
       border: none;
       padding: 2px 0.2rem;
       min-width: 15rem;
     }
     .btn_search {
+      height: 2.3rem;
       border: none;
       padding: 2px 9px;
       border-radius: 3px;
@@ -234,7 +275,7 @@ main {
   .col_10 {
     width: calc(100% / 10);
     .card_movie {
-      height: 240px;
+      height: 330px;
 
       .poster {
         text-align: center;
@@ -248,7 +289,7 @@ main {
       .movie_details {
         padding-bottom: 5px;
         display: none;
-        max-height: 240px;
+        max-height: 330px;
         overflow: auto;
         text-overflow: ellipsis;
       }
@@ -262,7 +303,7 @@ main {
     }
 
     .card_series {
-      height: 240px;
+      height: 330px;
       .poster {
         height: 100%;
         text-align: center;
@@ -274,10 +315,10 @@ main {
       }
       .serie_details {
         display: none;
-        max-height: 240px;
+        max-height: 330px;
         text-overflow: ellipsis;
         overflow-y: auto;
-
+        padding-bottom: 5px;
       }
     }
 
@@ -291,6 +332,13 @@ main {
     .flag {
       max-width: 30px;
     }
+  }
+  .active {
+    border-radius: 10px;
+    transform: scale(1.5);
+    padding: 1rem;
+    background: black;
+    min-height: 330px;
   }
 }
 </style>
