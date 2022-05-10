@@ -24,17 +24,18 @@ img{
 ul,
 li {
   list-style: none;
+  padding-left: 0;
 }
 
-.serie_details::-webkit-scrollbar, .movie_details::-webkit-scrollbar {
+*::-webkit-scrollbar, .movie_details::-webkit-scrollbar {
   width: 12px;               /* width of the entire scrollbar */
 }
 
-.serie_details::-webkit-scrollbar-track, .movie_details::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track, .movie_details::-webkit-scrollbar-track {
   background: $nf-background-primary;        /* color of the tracking area */
 }
 
-.serie_details::-webkit-scrollbar-thumb, .movie_details::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb, .movie_details::-webkit-scrollbar-thumb {
   background-color:  $nf-text-secondary;    /* color of the scroll thumb */
   border-radius: 20px;       /* roundness of the scroll thumb */
   border: 3px solid $nf-background-primary;  /* creates padding around scroll thumb */

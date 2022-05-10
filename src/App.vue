@@ -29,11 +29,20 @@
     <main class="wrapper p-3">
       <div class="container-fluid p-3">
         <section class="movies">
-          <h2>{{ movies.sectionTitle }}</h2>
+          <div class="movie_nav">
+            <h2>{{ movies.sectionTitle }}</h2>
+            <button @click="cutMovie">Indietro</button>
+            <button @click="addMovie">Avanti</button>
+          </div>
+
           <div class="row mt-1 g-3">
-            <div class="col_10" v-for="(movie,index) in movies" :key="movie.id + index">
+            <div
+              class="col_10"
+              v-for="(movie, index) in movies"
+              :key="movie.id + index"
+            >
               <div class="card_movie">
-                <div class="poster">
+                <div class="poster" @click="zoomInMovie(index)">
                   <img
                     class="poster_img"
                     :src="getPoster(movie)"
@@ -42,10 +51,53 @@
                 </div>
 
                 <div
-                  class="movie_details"
-                  @dblclick="zoomIn"
-                  @mouseleave="zoomOut"
-                  :class="{ active: isZoomed }"
+                  class="movie_details movie_banner_details"
+                  @click="zoomInMovie(index)"
+                  @mouseleave="zoomOutMovie"
+                  @dblclick="zoomOutMovie"
+                  :class="isZoomedMovie === index ? 'active' : 'd-none'"
+                >
+                  <div class="movie_title">
+                    <h5>{{ movie.title }}</h5>
+                  </div>
+                  <div class="d-flex">
+                    <div>
+                      <img :src="getPoster(movie)" :alt="movie.title" />
+                    </div>
+                    <div class="movie_ratings ms-2">
+                      <font-awesome-icon
+                        class="text-warning"
+                        v-for="n in ratingToStars(movie)"
+                        :key="n"
+                        icon="fa-solid fa-star"
+                      />
+                      <img
+                        class="flag ms-2"
+                        :src="renderFlag(movie)"
+                        @error="setAlternativeImg"
+                        alt=""
+                      />
+                      <ul>
+                        <li
+                          v-for="actor in creditsFilms[index]"
+                          :key="actor.name"
+                        >
+                          {{ actor.name }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <!-- <p>{{ movie.original_title }}</p> -->
+                  <div class="movie_overview">
+                    <p>{{ movie.overview }}</p>
+                  </div>
+                </div>
+
+                <div
+                  class="movie_details movie_card_details"
+                  @click="zoomInMovie(index)"
+                  :class="isZoomedMovie === index ? '' : 'd-block'"
                 >
                   <div class="movie_title">
                     <h5>{{ movie.title }}</h5>
@@ -69,8 +121,12 @@
                   <div class="movie_overview">
                     <p>{{ movie.overview }}</p>
                     <ul>
-                      <li v-for="actor in creditsFilms[index]" :key="actor.name">{{actor.name}} </li>
-                      
+                      <li
+                        v-for="actor in creditsFilms[index]"
+                        :key="actor.name"
+                      >
+                        {{ actor.name }}
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -80,26 +136,73 @@
         </section>
 
         <section class="series mt-3">
-          <h2>{{ series.sectionTitle }}</h2>
+          <div class="series_nav">
+            <h2>{{ series.sectionTitle }}</h2>
+            <button @click="cutSerie">Indietro</button>
+            <button @click="addSerie">Avanti</button>
+          </div>
+
           <div class="row g-3">
             <div
               class="col_10 series_poster"
-              v-for="serie in series"
+              v-for="(serie, index) in series"
               :key="serie.id"
             >
               <div class="card_series">
-                <div class="poster">
+                <div class="poster" @click="zoomInSerie(index)">
                   <img
                     class="poster_img"
                     :src="getPoster(serie)"
                     :alt="serie.title"
                   />
                 </div>
+
+                <div
+                  class="serie_banner"
+                  @click="zoomInSerie(index)"
+                  @mouseleave="zoomOutSerie"
+                  @dblclick="zoomOutSerie"
+                  :class="isZoomedSerie === index ? 'active' : 'd-none'"
+                >
+                  <h4>{{ serie.name }}</h4>
+                  <!--  <p>{{ serie.original_name }}</p> -->
+                  <div class="d-flex">
+                    <div>
+                      <img :src="getPoster(serie)" :alt="serie.title" />
+                    </div>
+                    <div class="serie_ratings ms-2">
+                      <font-awesome-icon
+                        class="text-warning"
+                        v-for="n in ratingToStars(serie)"
+                        :key="n"
+                        icon="fa-solid fa-star"
+                      />
+                      <img
+                        class="flag ms-2"
+                        :src="renderFlag(serie)"
+                        @error="setAlternativeImg"
+                        alt=""
+                      />
+                      <ul>
+                        <li
+                          v-for="actor in creditsFilms[index]"
+                          :key="actor.name"
+                        >
+                          {{ actor.name }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+               
+                  <div class="series_overview">
+                    <p>{{ serie.overview }}</p>
+                  </div>
+                </div>
+
                 <div
                   class="serie_details"
-                  @dblclick="zoomIn"
-                  @mouseleave="zoomOut"
-                  :class="{ active: isZoomed }"
+                  @click="zoomInSerie(index)"
+                  :class="isZoomedSerie === index ? '' : 'd-block'"
                 >
                   <h4>{{ serie.name }}</h4>
                   <!--  <p>{{ serie.original_name }}</p> -->
@@ -119,7 +222,6 @@
                   </div>
                   <div class="series_overview">
                     <p>{{ serie.overview }}</p>
-                    
                   </div>
                 </div>
               </div>
@@ -154,9 +256,12 @@ export default {
       countryFlag: "https://countryflagsapi.com/png/",
       posterSize: "w154/",
       stars: [],
-      isZoomed: false,
-      creditsFilms:[],
-      creditsSeries:[]
+      isZoomedMovie: false,
+      isZoomedSerie: false,
+      creditsFilms: [],
+      creditsSeries: [],
+      leftMovies: [],
+      leftSeries: [],
     };
   },
   methods: {
@@ -171,7 +276,7 @@ export default {
           return this.movies.forEach((movie) => {
             let moviesCreditsUrl = `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US`;
             axios.get(moviesCreditsUrl).then((credits) => {
-              this.creditsFilms.push(credits.data.cast.slice(0,3))
+              this.creditsFilms.push(credits.data.cast.slice(0, 3));
             });
           });
         });
@@ -185,8 +290,8 @@ export default {
           return this.series.forEach((serie) => {
             let seriesCreditsUrl = `https://api.themoviedb.org/3/tv/${serie.id}/season/1/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US`;
             axios.get(seriesCreditsUrl).then((credits) => {
-              this.creditsSeries.push(credits.data)
-            })
+              this.creditsSeries.push(credits.data);
+            });
             return this.series;
           });
         });
@@ -229,11 +334,42 @@ export default {
       this.stars.length = movieStars;
       return this.stars;
     },
-    zoomIn() {
-      this.isZoomed = !this.isZoomed;
+    zoomInMovie(index) {
+      this.isZoomedMovie = index;
     },
-    zoomOut() {
-      this.isZoomed = false;
+    zoomOutMovie() {
+      this.isZoomedMovie = false;
+    },
+    zoomInSerie(index) {
+      this.isZoomedSerie = index;
+    },
+    zoomOutSerie() {
+      this.isZoomedSerie = false;
+    },
+
+    addMovie() {
+      if (this.movies.length > 1) {
+        this.leftMovies.push(this.movies[0]);
+        this.movies.splice(0, 1);
+      }
+    },
+    cutMovie() {
+      if (this.leftMovies.length > 0) {
+        this.movies.unshift(this.leftMovies[0]);
+        this.leftMovies.splice(0, 1);
+      }
+    },
+    addSerie() {
+      if (this.series.length > 1) {
+        this.leftSeries.push(this.series[0]);
+        this.series.splice(0, 1);
+      }
+    },
+    cutSerie() {
+      if (this.leftSeries.length > 0) {
+        this.series.unshift(this.leftSeries[0]);
+        this.leftSeries.splice(0, 1);
+      }
     },
   },
 };
@@ -269,76 +405,86 @@ header {
   }
 }
 main {
+  position: relative;
   background-color: $nf-background-primary;
   color: $nf-text-secondary;
   min-height: calc(100vh - 100px);
-  .col_10 {
-    width: calc(100% / 10);
-    .card_movie {
-      height: 330px;
+  .row {
+    flex-wrap: nowrap;
+    overflow: hidden;
 
-      .poster {
-        text-align: center;
-        height: 100%;
-        img {
+    .col_10 {
+      width: calc(100% / 10);
+      min-width: 200px;
+      .card_movie {
+        height: 330px;
+
+        .poster {
+          text-align: center;
           height: 100%;
-          width: 100%;
-          object-fit: cover;
+          img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+          }
+        }
+        .movie_details,
+        .movie_banner {
+          padding-bottom: 5px;
+          max-height: 330px;
+          overflow: auto;
+          text-overflow: ellipsis;
         }
       }
-      .movie_details {
-        padding-bottom: 5px;
+
+      .card_movie:hover .poster {
         display: none;
-        max-height: 330px;
-        overflow: auto;
-        text-overflow: ellipsis;
       }
-    }
-    .card_movie:hover .movie_details {
-      display: block;
-    }
 
-    .card_movie:hover .poster {
-      display: none;
-    }
-
-    .card_series {
-      height: 330px;
-      .poster {
-        height: 100%;
-        text-align: center;
-        img {
+      .card_series {
+        height: 330px;
+        .poster {
           height: 100%;
-          width: 100%;
-          object-fit: cover;
+          text-align: center;
+          img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+          }
+        }
+        .serie_details,
+        .serie_banner {
+          max-height: 330px;
+          text-overflow: ellipsis;
+          overflow-y: auto;
+          padding-bottom: 5px;
         }
       }
-      .serie_details {
+
+      .card_series:hover .poster {
         display: none;
-        max-height: 330px;
-        text-overflow: ellipsis;
-        overflow-y: auto;
-        padding-bottom: 5px;
+      }
+
+      .flag {
+        max-width: 30px;
       }
     }
-
-    .card_series:hover .serie_details {
+    .active {
+      z-index: 5;
       display: block;
+      overflow: visible;
+      position: absolute;
+      border-radius: 10px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 1.5rem;
+      width: 30%;
+      background: black;
+      min-height: 330px;
+      max-height: unset;
+      font-size: 1.5rem;
     }
-    .card_series:hover .poster {
-      display: none;
-    }
-
-    .flag {
-      max-width: 30px;
-    }
-  }
-  .active {
-    border-radius: 10px;
-    transform: scale(1.5);
-    padding: 1rem;
-    background: black;
-    min-height: 330px;
   }
 }
 </style>
