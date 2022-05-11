@@ -223,7 +223,7 @@
           <div class="row g-3">
             <div
               class="col_10"
-              v-for="(serie, index) in series"
+              v-for="(serie, index) in filterSerie"
               :key="serie.id"
             >
               <div class="nf_card">
@@ -513,6 +513,15 @@ export default {
       } else {
         return this.movies.filter((movie) =>{
           return movie.genre_ids.includes(this.selectedGenre)
+        })
+      }
+    },
+        filterSerie() {
+      if (this.selectedGenre === "All") {
+        return this.series;
+      } else {
+        return this.series.filter((serie) =>{
+          return serie.genre_ids.includes(this.selectedGenre)
         })
       }
     },
