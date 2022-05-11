@@ -4,57 +4,11 @@
       <div class="container-fluid align-items-center">
         <div class="row h-100">
           <div class="col d-flex align-items-center">
-            <div class="logo">
-              <img src="./assets/img/netflix_logo_1.webp" alt="netflix logo" />
-            </div>
-            <!-- /.logo -->
+            <LogoSite></LogoSite>
           </div>
           <div class="col d-flex align-items-center justify-content-end">
-            <div
-              class="
-                search_bar
-                me-3
-                d-flex
-                align-items-center
-                position-relative
-              "
-            >
-              <input
-                v-on:keyup.enter="callApi"
-                type="search"
-                v-model="filmSearched"
-                name="film_search"
-                id="film_search"
-              />
-              <button class="btn_search" type="button" @click="callApi">
-                Search
-              </button>
-              <div class="select_bar">
-                <div class="mb-3 d-flex align-items-start">
-                  <div class="label me-3">
-                    <label for="genre" class="form-label">Genre:</label>
-                  </div>
-                  <div class="selection">
-                    <select
-                      
-                      class="form-select_ select_genre"
-                      name="genre"
-                      id="genreSelection"
-                      v-model="selectedGenre"
-                    >
-                      <option>All</option>
-                      <option
-                        v-for="(genre, index) in genresList"
-                        :key="index"
-                        v-bind:value="genre.id"
-                      >
-                        {{ genre.name }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <SearchBar></SearchBar>
+
             <!-- /.search_bar -->
           </div>
         </div>
@@ -69,7 +23,7 @@
             class="movie_nav d-flex justify-content-between align-item-center"
           >
             <div class="section_header">
-              <h2>{{ movies.sectionTitle }}</h2>
+              <h2>Movies</h2>
             </div>
 
             <div class="btn_slider">
@@ -112,8 +66,8 @@
                     <div class="ratings ms-2">
                       <font-awesome-icon
                         class="text-warning fs-5"
-                        v-for="(n,index) in ratingToStars(movie)"
-                        :key="'C'+n+index"
+                        v-for="(n, index) in ratingToStars(movie)"
+                        :key="'C' + n + index"
                         icon="fa-solid fa-star"
                       />
                       <img
@@ -125,7 +79,7 @@
                       <ul>
                         <li
                           class="fs-5"
-                          v-for="(actor,index) in creditsFilms[index]"
+                          v-for="(actor, index) in creditsFilms(index)"
                           :key="index"
                         >
                           {{ actor.name }}
@@ -137,7 +91,7 @@
                       <ul>
                         <li
                           class="fs-5"
-                          v-for="genre in genresMovies[index]"
+                          v-for="genre in genresMovies(index)"
                           :key="genre"
                         >
                           {{ genre }}
@@ -164,7 +118,7 @@
                   <div class="ratings">
                     <font-awesome-icon
                       class="text-warning fs-5"
-                      v-for="(n,index) in ratingToStars(movie)"
+                      v-for="(n, index) in ratingToStars(movie)"
                       :key="index"
                       icon="fa-solid fa-star"
                     />
@@ -179,7 +133,7 @@
                   <div class="genres my-2">
                     <h5>Genres:</h5>
                     <ul>
-                      <li v-for="genre in genresMovies[index]" :key="genre">
+                      <li v-for="genre in genresMovies(index)" :key="genre">
                         {{ genre }}
                       </li>
                     </ul>
@@ -190,7 +144,7 @@
                     <p>{{ movie.overview }}</p>
                     <ul>
                       <li
-                        v-for="actor in creditsFilms[index]"
+                        v-for="actor in creditsFilms(index)"
                         :key="actor.name"
                       >
                         {{ actor.name }}
@@ -206,14 +160,14 @@
         </section>
         <!-- /Section Movies -->
 
-        <section class="series mt-3">
+        <section class="series mt-3" v-if="filterSerie.length > 0">
           <div
             class="series_nav d-flex justify-content-between align-item-center"
           >
             <div class="section_header">
-              <h2>{{ series.sectionTitle }}</h2>
+              <h2>Serie Tv</h2>
             </div>
-            <div class="btn_slider" v-if="filterSerie.length > 0">
+            <div class="btn_slider">
               <button @click="cutSerie">Indietro</button>
               <button class="ms-2" @click="addSerie">Avanti</button>
             </div>
@@ -265,7 +219,7 @@
                       <ul>
                         <li
                           class="fs-5"
-                          v-for="actor in creditsSeries[index]"
+                          v-for="actor in creditsSeries(index)"
                           :key="actor.name"
                         >
                           {{ actor.name }}
@@ -277,7 +231,7 @@
                       <ul>
                         <li
                           class="fs-5"
-                          v-for="genre in genresSeries[index]"
+                          v-for="genre in genresSeries(index)"
                           :key="genre"
                         >
                           {{ genre }}
@@ -317,7 +271,7 @@
                   </div>
 
                   <ul>
-                    <li v-for="actor in creditsSeries[index]" :key="actor.name">
+                    <li v-for="actor in creditsSeries(index)" :key="actor.name">
                       {{ actor.name }}
                     </li>
                   </ul>
@@ -337,26 +291,18 @@
 </template>
 
 <script>
-import axios from "axios";
+import state from "@/state";
+import LogoSite from "@/components/LogoSite.vue";
+import SearchBar from "@/components/SearchBar.vue";
 
 export default {
   name: "App",
-  components: {},
+  components: {
+    LogoSite,
+    SearchBar,
+  },
   data() {
     return {
-      filmSearched: "",
-      searchMovieApi:
-        "https://api.themoviedb.org/3/search/movie?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
-      searchSeriesApi:
-        "https://api.themoviedb.org/3/search/tv?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
-      movies: [],
-      series: [],
-      creditsFilms: [],
-      creditsSeries: [],
-      selectedGenre: [],
-      genresList: [],
-      genresMovies: [],
-      genresSeries: [],
       countryFlag: "https://countryflagsapi.com/png/",
       posterSize: "w154/",
       stars: [],
@@ -367,60 +313,6 @@ export default {
     };
   },
   methods: {
-    callApi() {
-      if (this.filmSearched !== "") {
-        /* Get Genre List */
-
-        /* Get Searched Movies */
-        let moviesUrl = `${this.searchMovieApi}&query=${this.filmSearched}`;
-        axios.get(moviesUrl).then((movie) => {
-          this.movies = movie.data.results;
-          this.movies.sectionTitle = "Films";
-
-          /* Get Movies Credits and Genre Films*/
-          return this.movies.forEach((movie) => {
-            let moviesCreditsUrl = `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US`;
-            axios.get(moviesCreditsUrl).then((credits) => {
-              this.creditsFilms.push(credits.data.cast.slice(0, 3));
-            });
-
-            let genreMovie = [];
-            this.genresList.forEach((genre) => {
-              for (let i = 0; i < 3; i++) {
-                if (movie.genre_ids[i] === genre.id) {
-                  genreMovie.push(genre.name);
-                }
-              }
-            });
-            this.genresMovies.push(genreMovie);
-          });
-        });
-
-        /* Get Searched  Series */
-        let seriesUrl = `${this.searchSeriesApi}&query=${this.filmSearched}`;
-        axios.get(seriesUrl).then((movie) => {
-          this.series = movie.data.results;
-          this.series.sectionTitle = "TV Series";
-          /* Get Series Credits for season 1 */
-          return this.series.forEach((serie) => {
-            let seriesCreditsUrl = `https://api.themoviedb.org/3/tv/${serie.id}/season/1/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US`;
-            axios.get(seriesCreditsUrl).then((credits) => {
-              this.creditsSeries.push(credits.data.cast.slice(0, 3));
-            });
-
-            let genreSerie = [];
-            this.genresList.forEach((genre) => {
-              for (let i = 0; i < 3; i++) {
-                if (serie.genre_ids[i] === genre.id) {
-                  genreSerie.push(genre.name);
-                }
-              }
-            });
-            this.genresSeries.push(genreSerie);
-          });
-        });
-      }
-    },
     renderFlag(movie_serie) {
       if (movie_serie.original_language === "en") {
         let flag = this.countryFlag + "gb";
@@ -474,60 +366,63 @@ export default {
     },
 
     addMovie() {
-      if (this.movies.length > 1) {
-        this.leftMovies.push(this.movies[0]);
-        this.movies.splice(0, 1);
+      if (state.movies.length > 1) {
+        this.leftMovies.push(state.movies[0]);
+        state.movies.splice(0, 1);
       }
     },
     cutMovie() {
       if (this.leftMovies.length > 0) {
-        this.movies.unshift(this.leftMovies[0]);
+        state.movies.unshift(this.leftMovies[0]);
         this.leftMovies.splice(0, 1);
       }
     },
     addSerie() {
-      if (this.series.length > 1) {
-        this.leftSeries.push(this.series[0]);
-        this.series.splice(0, 1);
+      if (state.series.length > 1) {
+        this.leftSeries.push(state.series[0]);
+        state.series.splice(0, 1);
       }
     },
     cutSerie() {
       if (this.leftSeries.length > 0) {
-        this.series.unshift(this.leftSeries[0]);
+        state.series.unshift(this.leftSeries[0]);
         this.leftSeries.splice(0, 1);
       }
     },
-    getGenreList() {
-      let genreUrl =
-        "https://api.themoviedb.org/3/genre/movie/list?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US";
-      axios.get(genreUrl).then((genre) => {
-        this.genresList = genre.data.genres;
-        return this.genresList;
-      });
+    creditsFilms(index) {
+      return state.creditsFilms[index];
+    },
+    creditsSeries(index) {
+      return state.creditsSeries[index];
+    },
+    genresMovies(index) {
+      return state.genresMovies[index];
+    },
+    genresSeries(index) {
+      return state.genresSeries[index];
     },
   },
   computed: {
     filterMovie() {
-      if (this.selectedGenre === "All") {
-        return this.movies;
+      if (state.selectedGenre === "All") {
+        return state.movies;
       } else {
-        return this.movies.filter((movie) =>{
-          return movie.genre_ids.includes(this.selectedGenre)
-        })
+        return state.movies.filter((movie) => {
+          return movie.genre_ids.includes(state.selectedGenre);
+        });
       }
     },
-        filterSerie() {
-      if (this.selectedGenre === "All") {
-        return this.series;
+
+    filterSerie() {
+      if (state.selectedGenre === "All") {
+        return state.series;
       } else {
-        return this.series.filter((serie) =>{
-          return serie.genre_ids.includes(this.selectedGenre)
-        })
+        return state.series.filter((serie) => {
+          
+          return serie.genre_ids.includes(state.selectedGenre);
+        });
       }
     },
-  },
-  mounted() {
-    this.getGenreList();
   },
 };
 </script>
@@ -541,9 +436,7 @@ header {
 
   .container-fluid {
     height: 100%;
-    .logo {
-      width: 200px;
-    }
+
     #film_search {
       height: 2.3rem;
       border-radius: 2px;

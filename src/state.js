@@ -3,7 +3,13 @@
 import Vue from 'vue'
 // crea un oggetto usando .observable
 const state = Vue.observable({
-    searchText: ''
+    movies:[],
+    series:[],
+    selectedGenre:[],
+    creditsFilms: [],
+    creditsSeries: [],
+    genresMovies: [],
+    genresSeries: [],
 })
 // esporta lo state
 export default state
