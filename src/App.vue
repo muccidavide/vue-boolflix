@@ -213,7 +213,7 @@
             <div class="section_header">
               <h2>{{ series.sectionTitle }}</h2>
             </div>
-            <div class="btn_slider" v-if="series.length > 0">
+            <div class="btn_slider" v-if="filterSerie.length > 0">
               <button @click="cutSerie">Indietro</button>
               <button class="ms-2" @click="addSerie">Avanti</button>
             </div>
