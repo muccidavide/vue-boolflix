@@ -11,6 +11,7 @@
           <div class="col d-flex align-items-center justify-content-end">
             <div class="search_bar me-3 d-flex align-items-center">
               <input
+                v-on:keyup.enter="callApi"
                 type="search"
                 v-model="filmSearched"
                 name="film_search"
@@ -29,10 +30,17 @@
     <main class="wrapper p-3">
       <div class="container-fluid p-3">
         <section class="movies">
-          <div class="movie_nav">
-            <h2>{{ movies.sectionTitle }}</h2>
-            <button @click="cutMovie">Indietro</button>
-            <button @click="addMovie">Avanti</button>
+          <div
+            class="movie_nav d-flex justify-content-between align-item-center"
+          >
+            <div class="section_header">
+              <h2>{{ movies.sectionTitle }}</h2>
+            </div>
+
+            <div class="btn_slider" v-if="movies.length > 0">
+              <button @click="cutMovie">Indietro</button>
+              <button class="ms-2" @click="addMovie">Avanti</button>
+            </div>
           </div>
 
           <div class="row mt-1 g-3">
@@ -51,7 +59,7 @@
                 </div>
 
                 <div
-                  class="movie_details movie_banner_details"
+                  class="movie_banner"
                   @click="zoomInMovie(index)"
                   @mouseleave="zoomOutMovie"
                   @dblclick="zoomOutMovie"
@@ -60,7 +68,7 @@
                   <div class="movie_title">
                     <h5>{{ movie.title }}</h5>
                   </div>
-                  <div class="d-flex">
+                  <div class="d-flex mb-2">
                     <div>
                       <img :src="getPoster(movie)" :alt="movie.title" />
                     </div>
@@ -136,10 +144,16 @@
         </section>
 
         <section class="series mt-3">
-          <div class="series_nav">
-            <h2>{{ series.sectionTitle }}</h2>
-            <button @click="cutSerie">Indietro</button>
-            <button @click="addSerie">Avanti</button>
+          <div
+            class="series_nav d-flex justify-content-between align-item-center"
+          >
+            <div class="section_header">
+              <h2>{{ series.sectionTitle }}</h2>
+            </div>
+            <div class="btn_slider" v-if="series.length > 0">
+              <button @click="cutSerie">Indietro</button>
+              <button class="ms-2" @click="addSerie">Avanti</button>
+            </div>
           </div>
 
           <div class="row g-3">
@@ -166,7 +180,7 @@
                 >
                   <h4>{{ serie.name }}</h4>
                   <!--  <p>{{ serie.original_name }}</p> -->
-                  <div class="d-flex">
+                  <div class="d-flex mb-2">
                     <div>
                       <img :src="getPoster(serie)" :alt="serie.title" />
                     </div>
@@ -193,7 +207,7 @@
                       </ul>
                     </div>
                   </div>
-               
+
                   <div class="series_overview">
                     <p>{{ serie.overview }}</p>
                   </div>
@@ -246,11 +260,6 @@ export default {
         "https://api.themoviedb.org/3/search/movie?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
       searchSeriesApi:
         "https://api.themoviedb.org/3/search/tv?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
-      creditsMovieApi:
-        "https://api.themoviedb.org/3/movie/{movie_id}/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US",
-      creditsSerieApi:
-        "https://api.themoviedb.org/3/tv/{tv_id}/season/{season_number}/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US",
-
       movies: [],
       series: [],
       countryFlag: "https://countryflagsapi.com/png/",
@@ -335,12 +344,14 @@ export default {
       return this.stars;
     },
     zoomInMovie(index) {
+      this.isZoomedSerie = false;
       this.isZoomedMovie = index;
     },
     zoomOutMovie() {
       this.isZoomedMovie = false;
     },
     zoomInSerie(index) {
+      this.isZoomedMovie = false;
       this.isZoomedSerie = index;
     },
     zoomOutSerie() {
@@ -385,7 +396,7 @@ header {
   .container-fluid {
     height: 100%;
     .logo {
-      width: 150px;
+      width: 200px;
     }
     #film_search {
       height: 2.3rem;
@@ -395,12 +406,9 @@ header {
       min-width: 15rem;
     }
     .btn_search {
-      height: 2.3rem;
-      border: none;
-      padding: 2px 9px;
-      border-radius: 3px;
 
-      margin-left: 2px;
+      border: none;
+          margin-left: 10px;
     }
   }
 }
@@ -414,10 +422,10 @@ main {
     overflow: hidden;
 
     .col_10 {
-      width: calc(100% / 10);
+      width: calc(100% / 8);
       min-width: 200px;
       .card_movie {
-        height: 330px;
+        height: 440px;
 
         .poster {
           text-align: center;
@@ -431,9 +439,16 @@ main {
         .movie_details,
         .movie_banner {
           padding-bottom: 5px;
-          max-height: 330px;
           overflow: auto;
           text-overflow: ellipsis;
+          max-height: 400px;
+        }
+        .movie_details {
+          font-size: 1.2rem;
+        }
+        .movie_banner {
+          width: 40%;
+          font-size: 2rem;
         }
       }
 
@@ -442,7 +457,7 @@ main {
       }
 
       .card_series {
-        height: 330px;
+        height: 400px;
         .poster {
           height: 100%;
           text-align: center;
@@ -454,10 +469,17 @@ main {
         }
         .serie_details,
         .serie_banner {
-          max-height: 330px;
-          text-overflow: ellipsis;
-          overflow-y: auto;
           padding-bottom: 5px;
+          overflow: auto;
+          text-overflow: ellipsis;
+          max-height: 400px;
+        }
+        .serie_details {
+          font-size: 1.2rem;
+        }
+        .serie_banner {
+          width: 40%;
+          font-size: 2rem;
         }
       }
 
@@ -480,8 +502,8 @@ main {
       transform: translate(-50%, -50%);
       padding: 1.5rem;
       width: 30%;
-      background: black;
-      min-height: 330px;
+      background: rgba(0, 0, 0, 0.885);
+      min-height: 60vh;
       max-height: unset;
       font-size: 1.5rem;
     }

@@ -20,6 +20,16 @@ img{
   max-width: 100%;
   height: auto;
 }
+input{
+  font-size: 1.3rem;
+}
+
+button{
+  font-size: 2rem;
+  border: none;
+  color: $nf-text-secondary;
+  background-color: $nf-background-primary;
+}
 
 ul,
 li {
