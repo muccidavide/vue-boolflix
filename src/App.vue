@@ -7,6 +7,7 @@
             <div class="logo">
               <img src="./assets/img/netflix_logo_1.webp" alt="netflix logo" />
             </div>
+            <!-- /.logo -->
           </div>
           <div class="col d-flex align-items-center justify-content-end">
             <div class="search_bar me-3 d-flex align-items-center">
@@ -21,12 +22,13 @@
                 Search
               </button>
             </div>
+            <!-- /.search_bar -->
           </div>
         </div>
       </div>
     </header>
+    <!-- /Header -->
 
-    <!-- Main Component -->
     <main class="wrapper p-3">
       <div class="container-fluid p-3">
         <section class="movies">
@@ -42,6 +44,7 @@
               <button class="ms-2" @click="addMovie">Avanti</button>
             </div>
           </div>
+          <!-- /.movie_nav -->
 
           <div class="row mt-1 g-3">
             <div
@@ -49,7 +52,7 @@
               v-for="(movie, index) in movies"
               :key="movie.id + index"
             >
-              <div class="card_movie">
+              <div class="nf_card">
                 <div class="poster" @click="zoomInMovie(index)">
                   <img
                     class="poster_img"
@@ -57,22 +60,23 @@
                     :alt="movie.title"
                   />
                 </div>
+                <!-- /.poster -->
 
                 <div
-                  class="movie_banner"
+                  class="card_banner"
                   @click="zoomInMovie(index)"
                   @mouseleave="zoomOutMovie"
                   @dblclick="zoomOutMovie"
                   :class="isZoomedMovie === index ? 'active' : 'd-none'"
                 >
-                  <div class="movie_title">
+                  <div class="title">
                     <h5>{{ movie.title }}</h5>
                   </div>
                   <div class="d-flex mb-2">
                     <div>
                       <img :src="getPoster(movie)" :alt="movie.title" />
                     </div>
-                    <div class="movie_ratings ms-2">
+                    <div class="ratings ms-2">
                       <font-awesome-icon
                         class="text-warning"
                         v-for="n in ratingToStars(movie)"
@@ -97,20 +101,21 @@
                   </div>
 
                   <!-- <p>{{ movie.original_title }}</p> -->
-                  <div class="movie_overview">
+                  <div class="overview">
                     <p>{{ movie.overview }}</p>
                   </div>
                 </div>
+                <!-- /.card_banner -->
 
                 <div
-                  class="movie_details movie_card_details"
+                  class="details movie_card_details"
                   @click="zoomInMovie(index)"
                   :class="isZoomedMovie === index ? '' : 'd-block'"
                 >
-                  <div class="movie_title">
+                  <div class="title">
                     <h5>{{ movie.title }}</h5>
                   </div>
-                  <div class="movie_ratings">
+                  <div class="ratings">
                     <font-awesome-icon
                       class="text-warning"
                       v-for="n in ratingToStars(movie)"
@@ -126,7 +131,7 @@
                   </div>
 
                   <!-- <p>{{ movie.original_title }}</p> -->
-                  <div class="movie_overview">
+                  <div class="overview">
                     <p>{{ movie.overview }}</p>
                     <ul>
                       <li
@@ -138,10 +143,13 @@
                     </ul>
                   </div>
                 </div>
+                <!-- /.movie_card_details -->
               </div>
+              <!-- /.card_movie -->
             </div>
           </div>
         </section>
+        <!-- /Section Movies -->
 
         <section class="series mt-3">
           <div
@@ -155,14 +163,15 @@
               <button class="ms-2" @click="addSerie">Avanti</button>
             </div>
           </div>
+          <!-- /.series_nav -->
 
           <div class="row g-3">
             <div
-              class="col_10 series_poster"
+              class="col_10"
               v-for="(serie, index) in series"
               :key="serie.id"
             >
-              <div class="card_series">
+              <div class="nf_card">
                 <div class="poster" @click="zoomInSerie(index)">
                   <img
                     class="poster_img"
@@ -170,9 +179,10 @@
                     :alt="serie.title"
                   />
                 </div>
+                <!-- /.poster -->
 
                 <div
-                  class="serie_banner"
+                  class="card_banner"
                   @click="zoomInSerie(index)"
                   @mouseleave="zoomOutSerie"
                   @dblclick="zoomOutSerie"
@@ -184,7 +194,7 @@
                     <div>
                       <img :src="getPoster(serie)" :alt="serie.title" />
                     </div>
-                    <div class="serie_ratings ms-2">
+                    <div class="ratings ms-2">
                       <font-awesome-icon
                         class="text-warning"
                         v-for="n in ratingToStars(serie)"
@@ -208,19 +218,19 @@
                     </div>
                   </div>
 
-                  <div class="series_overview">
+                  <div class="overview">
                     <p>{{ serie.overview }}</p>
                   </div>
                 </div>
-
+                <!-- /.card_banner -->
                 <div
-                  class="serie_details"
+                  class="details"
                   @click="zoomInSerie(index)"
                   :class="isZoomedSerie === index ? '' : 'd-block'"
                 >
                   <h4>{{ serie.name }}</h4>
                   <!--  <p>{{ serie.original_name }}</p> -->
-                  <div class="series_rating">
+                  <div class="rating">
                     <font-awesome-icon
                       class="text-warning"
                       v-for="n in ratingToStars(serie)"
@@ -234,16 +244,21 @@
                       :alt="serie.title"
                     />
                   </div>
-                  <div class="series_overview">
+                  <div class="overview">
                     <p>{{ serie.overview }}</p>
                   </div>
                 </div>
+                <!-- /.details -->
               </div>
+              <!-- /.card_serie -->
             </div>
           </div>
         </section>
+
+        <!-- /Section Movies -->
       </div>
     </main>
+    <!-- /Main Component -->
   </div>
 </template>
 
@@ -406,9 +421,8 @@ header {
       min-width: 15rem;
     }
     .btn_search {
-
       border: none;
-          margin-left: 10px;
+      margin-left: 10px;
     }
   }
 }
@@ -424,71 +438,40 @@ main {
     .col_10 {
       width: calc(100% / 8);
       min-width: 200px;
-      .card_movie {
-        height: 440px;
 
-        .poster {
-          text-align: center;
-          height: 100%;
-          img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-          }
-        }
-        .movie_details,
-        .movie_banner {
-          padding-bottom: 5px;
-          overflow: auto;
-          text-overflow: ellipsis;
-          max-height: 400px;
-        }
-        .movie_details {
-          font-size: 1.2rem;
-        }
-        .movie_banner {
-          width: 40%;
-          font-size: 2rem;
-        }
-      }
-
-      .card_movie:hover .poster {
-        display: none;
-      }
-
-      .card_series {
+      .nf_card {
         height: 400px;
+
         .poster {
-          height: 100%;
           text-align: center;
+          height: 100%;
           img {
             height: 100%;
             width: 100%;
             object-fit: cover;
           }
         }
-        .serie_details,
-        .serie_banner {
+        .details,
+        .card_banner {
           padding-bottom: 5px;
           overflow: auto;
           text-overflow: ellipsis;
           max-height: 400px;
+          .flag {
+            max-width: 30px;
+          }
         }
-        .serie_details {
+        .details {
           font-size: 1.2rem;
         }
-        .serie_banner {
+        .card_banner {
           width: 40%;
           font-size: 2rem;
         }
       }
 
-      .card_series:hover .poster {
+      .nf_card:hover .poster {
         display: none;
-      }
-
-      .flag {
-        max-width: 30px;
       }
     }
     .active {
