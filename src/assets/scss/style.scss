@@ -24,11 +24,15 @@ input{
   font-size: 1.3rem;
 }
 
-button{
+button,label{
   font-size: 2rem;
   border: none;
   color: $nf-text-secondary;
   background-color: $nf-background-primary;
+}
+
+select{
+  font-size: 1.3rem;
 }
 
 ul,

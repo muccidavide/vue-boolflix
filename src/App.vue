@@ -10,7 +10,15 @@
             <!-- /.logo -->
           </div>
           <div class="col d-flex align-items-center justify-content-end">
-            <div class="search_bar me-3 d-flex align-items-center">
+            <div
+              class="
+                search_bar
+                me-3
+                d-flex
+                align-items-center
+                position-relative
+              "
+            >
               <input
                 v-on:keyup.enter="callApi"
                 type="search"
@@ -21,6 +29,31 @@
               <button class="btn_search" type="button" @click="callApi">
                 Search
               </button>
+              <div class="select_bar">
+                <div class="mb-3 d-flex align-items-start">
+                  <div class="label me-3">
+                    <label for="genre" class="form-label">Genre:</label>
+                  </div>
+                  <div class="selection">
+                    <select
+                      
+                      class="form-select_ select_genre"
+                      name="genre"
+                      id="genreSelection"
+                      v-model="selectedGenre"
+                    >
+                      <option>All</option>
+                      <option
+                        v-for="(genre, index) in genresList"
+                        :key="index"
+                        v-bind:value="genre.id"
+                      >
+                        {{ genre.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
             <!-- /.search_bar -->
           </div>
@@ -31,7 +64,7 @@
 
     <main class="wrapper p-3">
       <div class="container-fluid p-3">
-        <section class="movies">
+        <section class="movies" v-if="filterMovie.length > 0">
           <div
             class="movie_nav d-flex justify-content-between align-item-center"
           >
@@ -39,7 +72,7 @@
               <h2>{{ movies.sectionTitle }}</h2>
             </div>
 
-            <div class="btn_slider" v-if="movies.length > 0">
+            <div class="btn_slider">
               <button @click="cutMovie">Indietro</button>
               <button class="ms-2" @click="addMovie">Avanti</button>
             </div>
@@ -49,8 +82,8 @@
           <div class="row mt-1 g-3">
             <div
               class="col_10"
-              v-for="(movie, index) in movies"
-              :key="movie.id + index"
+              v-for="(movie, index) in filterMovie"
+              :key="index"
             >
               <div class="nf_card">
                 <div class="poster" @click="zoomInMovie(index)">
@@ -70,31 +103,44 @@
                   :class="isZoomedMovie === index ? 'active' : 'd-none'"
                 >
                   <div class="title">
-                    <h5>{{ movie.title }}</h5>
+                    <h3>{{ movie.title }}</h3>
                   </div>
-                  <div class="d-flex mb-2">
+                  <div class="d-flex mb-2 align-items-start">
                     <div>
                       <img :src="getPoster(movie)" :alt="movie.title" />
                     </div>
                     <div class="ratings ms-2">
                       <font-awesome-icon
-                        class="text-warning"
-                        v-for="n in ratingToStars(movie)"
-                        :key="n"
+                        class="text-warning fs-5"
+                        v-for="(n,index) in ratingToStars(movie)"
+                        :key="'C'+n+index"
                         icon="fa-solid fa-star"
                       />
                       <img
-                        class="flag ms-2"
+                        class="flag my-2 d-block"
                         :src="renderFlag(movie)"
                         @error="setAlternativeImg"
                         alt=""
                       />
                       <ul>
                         <li
-                          v-for="actor in creditsFilms[index]"
-                          :key="actor.name"
+                          class="fs-5"
+                          v-for="(actor,index) in creditsFilms[index]"
+                          :key="index"
                         >
                           {{ actor.name }}
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="genres ms-3">
+                      <h5 class="fs-3">Genres:</h5>
+                      <ul>
+                        <li
+                          class="fs-5"
+                          v-for="genre in genresMovies[index]"
+                          :key="genre"
+                        >
+                          {{ genre }}
                         </li>
                       </ul>
                     </div>
@@ -113,13 +159,13 @@
                   :class="isZoomedMovie === index ? '' : 'd-block'"
                 >
                   <div class="title">
-                    <h5>{{ movie.title }}</h5>
+                    <h3>{{ movie.title }}</h3>
                   </div>
                   <div class="ratings">
                     <font-awesome-icon
-                      class="text-warning"
-                      v-for="n in ratingToStars(movie)"
-                      :key="n"
+                      class="text-warning fs-5"
+                      v-for="(n,index) in ratingToStars(movie)"
+                      :key="index"
                       icon="fa-solid fa-star"
                     />
                     <img
@@ -128,6 +174,15 @@
                       @error="setAlternativeImg"
                       alt=""
                     />
+                  </div>
+
+                  <div class="genres my-2">
+                    <h5>Genres:</h5>
+                    <ul>
+                      <li v-for="genre in genresMovies[index]" :key="genre">
+                        {{ genre }}
+                      </li>
+                    </ul>
                   </div>
 
                   <!-- <p>{{ movie.original_title }}</p> -->
@@ -188,7 +243,7 @@
                   @dblclick="zoomOutSerie"
                   :class="isZoomedSerie === index ? 'active' : 'd-none'"
                 >
-                  <h4>{{ serie.name }}</h4>
+                  <h3 class="fs-1">{{ serie.name }}</h3>
                   <!--  <p>{{ serie.original_name }}</p> -->
                   <div class="d-flex mb-2">
                     <div>
@@ -196,23 +251,36 @@
                     </div>
                     <div class="ratings ms-2">
                       <font-awesome-icon
-                        class="text-warning"
+                        class="text-warning fs-5"
                         v-for="n in ratingToStars(serie)"
                         :key="n"
                         icon="fa-solid fa-star"
                       />
                       <img
-                        class="flag ms-2"
+                        class="flag d-block"
                         :src="renderFlag(serie)"
                         @error="setAlternativeImg"
                         alt=""
                       />
                       <ul>
                         <li
-                          v-for="actor in creditsFilms[index]"
+                          class="fs-5"
+                          v-for="actor in creditsSeries[index]"
                           :key="actor.name"
                         >
                           {{ actor.name }}
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="genres ms-3">
+                      <h5 class="fs-3">Genres:</h5>
+                      <ul>
+                        <li
+                          class="fs-5"
+                          v-for="genre in genresSeries[index]"
+                          :key="genre"
+                        >
+                          {{ genre }}
                         </li>
                       </ul>
                     </div>
@@ -228,11 +296,11 @@
                   @click="zoomInSerie(index)"
                   :class="isZoomedSerie === index ? '' : 'd-block'"
                 >
-                  <h4>{{ serie.name }}</h4>
+                  <h3>{{ serie.name }}</h3>
                   <!--  <p>{{ serie.original_name }}</p> -->
                   <div class="rating">
                     <font-awesome-icon
-                      class="text-warning"
+                      class="text-warning fs-5"
                       v-for="n in ratingToStars(serie)"
                       :key="n"
                       icon="fa-solid fa-star"
@@ -247,6 +315,12 @@
                   <div class="overview">
                     <p>{{ serie.overview }}</p>
                   </div>
+
+                  <ul>
+                    <li v-for="actor in creditsSeries[index]" :key="actor.name">
+                      {{ actor.name }}
+                    </li>
+                  </ul>
                 </div>
                 <!-- /.details -->
               </div>
@@ -277,13 +351,17 @@ export default {
         "https://api.themoviedb.org/3/search/tv?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US&page=1&include_adult=false",
       movies: [],
       series: [],
+      creditsFilms: [],
+      creditsSeries: [],
+      selectedGenre: [],
+      genresList: [],
+      genresMovies: [],
+      genresSeries: [],
       countryFlag: "https://countryflagsapi.com/png/",
       posterSize: "w154/",
       stars: [],
       isZoomedMovie: false,
       isZoomedSerie: false,
-      creditsFilms: [],
-      creditsSeries: [],
       leftMovies: [],
       leftSeries: [],
     };
@@ -291,32 +369,54 @@ export default {
   methods: {
     callApi() {
       if (this.filmSearched !== "") {
+        /* Get Genre List */
+
         /* Get Searched Movies */
         let moviesUrl = `${this.searchMovieApi}&query=${this.filmSearched}`;
         axios.get(moviesUrl).then((movie) => {
           this.movies = movie.data.results;
           this.movies.sectionTitle = "Films";
 
+          /* Get Movies Credits and Genre Films*/
           return this.movies.forEach((movie) => {
             let moviesCreditsUrl = `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US`;
             axios.get(moviesCreditsUrl).then((credits) => {
               this.creditsFilms.push(credits.data.cast.slice(0, 3));
             });
+
+            let genreMovie = [];
+            this.genresList.forEach((genre) => {
+              for (let i = 0; i < 3; i++) {
+                if (movie.genre_ids[i] === genre.id) {
+                  genreMovie.push(genre.name);
+                }
+              }
+            });
+            this.genresMovies.push(genreMovie);
           });
         });
 
-        /* Get Searched Movies */
+        /* Get Searched  Series */
         let seriesUrl = `${this.searchSeriesApi}&query=${this.filmSearched}`;
         axios.get(seriesUrl).then((movie) => {
           this.series = movie.data.results;
           this.series.sectionTitle = "TV Series";
-
+          /* Get Series Credits for season 1 */
           return this.series.forEach((serie) => {
             let seriesCreditsUrl = `https://api.themoviedb.org/3/tv/${serie.id}/season/1/credits?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US`;
             axios.get(seriesCreditsUrl).then((credits) => {
-              this.creditsSeries.push(credits.data);
+              this.creditsSeries.push(credits.data.cast.slice(0, 3));
             });
-            return this.series;
+
+            let genreSerie = [];
+            this.genresList.forEach((genre) => {
+              for (let i = 0; i < 3; i++) {
+                if (serie.genre_ids[i] === genre.id) {
+                  genreSerie.push(genre.name);
+                }
+              }
+            });
+            this.genresSeries.push(genreSerie);
           });
         });
       }
@@ -397,6 +497,28 @@ export default {
         this.leftSeries.splice(0, 1);
       }
     },
+    getGenreList() {
+      let genreUrl =
+        "https://api.themoviedb.org/3/genre/movie/list?api_key=d5fefff0eb8a3f597dfd660cee438f0e&language=en-US";
+      axios.get(genreUrl).then((genre) => {
+        this.genresList = genre.data.genres;
+        return this.genresList;
+      });
+    },
+  },
+  computed: {
+    filterMovie() {
+      if (this.selectedGenre === "All") {
+        return this.movies;
+      } else {
+        return this.movies.filter((movie) =>{
+          return movie.genre_ids.includes(this.selectedGenre)
+        })
+      }
+    },
+  },
+  mounted() {
+    this.getGenreList();
   },
 };
 </script>
@@ -423,6 +545,16 @@ header {
     .btn_search {
       border: none;
       margin-left: 10px;
+    }
+    .select_bar {
+      position: absolute;
+      left: -20px;
+      top: 0;
+      transform: translate(-100%, 4px);
+      padding: 2px 0.2rem;
+      .select_genre {
+        width: 200px;
+      }
     }
   }
 }
@@ -466,7 +598,7 @@ main {
         }
         .card_banner {
           width: 40%;
-          font-size: 2rem;
+          font-size: 1.5rem;
         }
       }
 
