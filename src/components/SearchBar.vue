@@ -1,20 +1,12 @@
 <template>
   <div class="search_bar me-3 d-flex align-items-center position-relative">
-    <input
-      v-on:keyup.enter="callApi"
-      type="search"
-      v-model="filmSearched"
-      name="film_search"
-      id="film_search"
-    />
-    <button class="btn_search" type="button" @click="callApi">Search</button>
-    <div class="select_bar">
-      <div class="mb-3 d-flex align-items-start">
+        <div class="select_bar">
+      <div class="d-flex align-items-center">
         <div class="label me-3">
-          <label for="genre" class="form-label">Genre:</label>
+          <label for="genre" >Genre:</label>
         </div>
         <div class="selection">
-          <select
+          <select 
             class="form-select_ select_genre"
             name="genre"
             id="genreSelection"
@@ -33,6 +25,17 @@
         </div>
       </div>
     </div>
+
+
+    <input
+      v-on:keyup.enter="callApi"
+      type="search"   
+      v-model="filmSearched"
+      name="film_search"
+      id="film_search"
+    />
+    <button class="btn_search" type="button" @click="callApi">Search</button>
+
   </div>
 </template>
 
@@ -44,7 +47,7 @@ export default {
   name: "SearchBar",
   data() {
     return {
-      selectedGenre:[],
+      selectedGenre:"",
       filmSearched: "",
       genresList: [],
       movies: [],
@@ -113,14 +116,11 @@ export default {
 
             this.genresSeries.push(genreSerie);
 
-            /*  */
-
+            /* export data into state.js */
             state.movies = this.movies;
             state.series = this.series;
-
             state.creditsFilms = this.creditsFilms;
-            state.creditsSeries = this.creditsSeries;
-                        
+            state.creditsSeries = this.creditsSeries;                       
             state.genresMovies = this.genresMovies;
             state.genresSeries = this.genresSeries;
           });
@@ -146,4 +146,22 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+
+    #film_search {
+      height: 2.3rem;
+      border-radius: 2px;
+      border: none;
+      padding: 2px 0.2rem;
+      min-width: 15rem;
+    }
+    .btn_search {
+      border: none;
+      margin-left: 10px;
+    }
+    .select_bar {
+      padding: 2px 0.2rem;
+      .select_genre {
+        width: 200px;
+      }
+    }
 </style>

@@ -5,11 +5,13 @@ import Vue from 'vue'
 const state = Vue.observable({
     movies:[],
     series:[],
-    selectedGenre:[],
+    selectedGenre:"All",
     creditsFilms: [],
     creditsSeries: [],
     genresMovies: [],
     genresSeries: [],
+    isZoomedMovie:false,
+    isZoomedSerie:false,
 })
 // esporta lo state
 export default state
