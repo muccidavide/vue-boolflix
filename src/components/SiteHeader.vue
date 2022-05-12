@@ -36,6 +36,7 @@ export default {
 header {
   background-color: $nf-background-primary;
   height: 100px;
+  
 
   .container-fluid {
     height: 100%;

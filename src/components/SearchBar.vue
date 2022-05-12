@@ -160,6 +160,7 @@ export default {
     }
     .select_bar {
       padding: 2px 0.2rem;
+      z-index: 10;
       .select_genre {
         width: 200px;
       }
