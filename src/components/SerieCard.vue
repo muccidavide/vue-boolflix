@@ -7,8 +7,6 @@
 
     <div
       class="card_banner"
-      @click="zoomInSerie(index)"
-      @mouseleave="zoomOutSerie"
       @dblclick="zoomOutSerie"
       :class="isZoomedSerie(index) ? 'active' : 'd-none'"
     >
@@ -53,6 +51,9 @@
 
       <div class="overview">
         <p>{{ serie.overview }}</p>
+      </div>
+      <div class="cross_btn">
+        <button @click="zoomOutSerie">Close</button>
       </div>
     </div>
     <!-- /.card_banner -->

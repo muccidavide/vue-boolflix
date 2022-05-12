@@ -7,10 +7,8 @@
 
     <div
       class="card_banner"
-      @click="zoomInMovie(index)"
-      @mouseleave="zoomOutMovie"
       @dblclick="zoomOutMovie"
-      :class="isZoomedMovie(index)? 'active' : 'd-none'"
+      :class="isZoomedMovie(index) ? 'active' : 'd-none'"
     >
       <div class="title">
         <h3>{{ movie.title }}</h3>
@@ -56,13 +54,16 @@
       <div class="overview">
         <p>{{ movie.overview }}</p>
       </div>
+      <div class="cross_btn">
+        <button @click="zoomOutMovie">Close</button>
+      </div>
     </div>
     <!-- /.card_banner -->
 
     <div
       class="details movie_card_details"
       @click="zoomInMovie(index)"
-      :class="isZoomedMovie(index)? '' : 'd-block'"
+      :class="isZoomedMovie(index) ? '' : 'd-block'"
     >
       <div class="title">
         <h3>{{ movie.title }}</h3>
