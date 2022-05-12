@@ -1,110 +1,109 @@
 <template>
-            <div class="nf_card">
-              <div class="poster" @click="zoomInSerie(index)">
-                <img
-                  class="poster_img"
-                  :src="getPoster(serie)"
-                  :alt="serie.title"
-                />
-              </div>
-              <!-- /.poster -->
+  <div class="nf_card">
+    <div class="poster" @click="zoomInSerie(index)">
+      <img class="poster_img" :src="getPoster(serie)" :alt="serie.title" />
+    </div>
+    <!-- /.poster -->
 
-              <div
-                class="card_banner"
-                @click="zoomInSerie(index)"
-                @mouseleave="zoomOutSerie"
-                @dblclick="zoomOutSerie"
-                :class="isZoomedSerie(index)? 'active' : 'd-none'"
-              >
-                <h3 class="fs-1">{{ serie.name }}</h3>
-                <!--  <p>{{ serie.original_name }}</p> -->
-                <div class="d-flex mb-2">
-                  <div>
-                    <img :src="getPoster(serie)" :alt="serie.title" />
-                  </div>
-                  <div class="ratings ms-2">
-                    <font-awesome-icon
-                      class="text-warning fs-5"
-                      v-for="n in ratingToStars(serie)"
-                      :key="n"
-                      icon="fa-solid fa-star"
-                    />
-                    <img
-                      class="flag d-block"
-                      :src="renderFlag(serie)"
-                      @error="setAlternativeImg"
-                      alt=""
-                    />
-                    <ul>
-                      <li
-                        class="fs-5"
-                        v-for="actor in creditsSeries(index)"
-                        :key="actor.name"
-                      >
-                        {{ actor.name }}
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="genres ms-3">
-                    <h5 class="fs-3">Genres:</h5>
-                    <ul>
-                      <li
-                        class="fs-5"
-                        v-for="genre in genresSeries(index)"
-                        :key="genre"
-                      >
-                        {{ genre }}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+    <div
+      class="card_banner"
+      @click="zoomInSerie(index)"
+      @mouseleave="zoomOutSerie"
+      @dblclick="zoomOutSerie"
+      :class="isZoomedSerie(index) ? 'active' : 'd-none'"
+    >
+      <h3 class="fs-1">{{ serie.name }}</h3>
+      <!--  <p>{{ serie.original_name }}</p> -->
+      <div class="d-flex mb-2">
+        <div>
+          <img :src="getPoster(serie)" :alt="serie.title" />
+        </div>
+        <div class="ratings ms-2">
+          <font-awesome-icon
+            class="text-warning fs-5"
+            v-for="n in ratingToStars(serie)"
+            :key="n"
+            icon="fa-solid fa-star"
+          />
+          <img
+            class="flag d-block"
+            :src="renderFlag(serie)"
+            @error="setAlternativeImg"
+            alt=""
+          />
+          <ul>
+            <li
+              class="fs-5"
+              v-for="actor in creditsSeries(index)"
+              :key="actor.name"
+            >
+              {{ actor.name }}
+            </li>
+          </ul>
+        </div>
+        <div v-if="genresSeries(index).length > 0" class="genres ms-3">
+          <h5 class="fs-3">Genres:</h5>
+          <ul>
+            <li class="fs-5" v-for="genre in genresSeries(index)" :key="genre">
+              {{ genre }}
+            </li>
+          </ul>
+        </div>
+      </div>
 
-                <div class="overview">
-                  <p>{{ serie.overview }}</p>
-                </div>
-              </div>
-              <!-- /.card_banner -->
-              <div
-                class="details"
-                @click="zoomInSerie(index)"
-                :class="isZoomedSerie(index)? '' : 'd-block'"
-              >
-                <h3>{{ serie.name }}</h3>
-                <!--  <p>{{ serie.original_name }}</p> -->
-                <div class="rating">
-                  <font-awesome-icon
-                    class="text-warning fs-5"
-                    v-for="n in ratingToStars(serie)"
-                    :key="n"
-                    icon="fa-solid fa-star"
-                  />
-                  <img
-                    class="flag ms-2"
-                    :src="renderFlag(serie)"
-                    @error="setAlternativeImg"
-                    :alt="serie.title"
-                  />
-                </div>
-                <div class="overview">
-                  <p>{{ serie.overview }}</p>
-                </div>
+      <div class="overview">
+        <p>{{ serie.overview }}</p>
+      </div>
+    </div>
+    <!-- /.card_banner -->
+    <div
+      class="details"
+      @click="zoomInSerie(index)"
+      :class="isZoomedSerie(index) ? '' : 'd-block'"
+    >
+      <h3>{{ serie.name }}</h3>
+      <!--  <p>{{ serie.original_name }}</p> -->
+      <div class="rating">
+        <font-awesome-icon
+          class="text-warning fs-5"
+          v-for="n in ratingToStars(serie)"
+          :key="n"
+          icon="fa-solid fa-star"
+        />
+        <img
+          class="flag ms-2"
+          :src="renderFlag(serie)"
+          @error="setAlternativeImg"
+          :alt="serie.title"
+        />
+      </div>
+      <div v-if="genresSeries(index).length > 0" class="genres my-2">
+        <h5>Genres:</h5>
+        <ul>
+          <li class="fs-5" v-for="genre in genresSeries(index)" :key="genre">
+            {{ genre }}
+          </li>
+        </ul>
+      </div>
+      <div class="overview">
+        <p>{{ serie.overview }}</p>
+      </div>
 
-                <ul>
-                  <li v-for="actor in creditsSeries(index)" :key="actor.name">
-                    {{ actor.name }}
-                  </li>
-                </ul>
-              </div>
-              <!-- /.details -->
-            </div>
-            <!-- /.card_serie -->
-
+      <ul>
+        <li v-for="actor in creditsSeries(index)" :key="actor.name">
+          {{ actor.name }}
+        </li>
+      </ul>
+    </div>
+    <!-- /.details -->
+  </div>
+  <!-- /.card_serie -->
 </template>
 
 <script>
 import state from "@/state";
-    export default {
-        name: 'SerieCard',
+export default {
+  name: "SerieCard",
   props: {
     index: Number,
     serie: Object,
@@ -182,13 +181,12 @@ import state from "@/state";
     zoomOutSerie() {
       state.isZoomedSerie = false;
     },
-    isZoomedSerie(index){
-      return state.isZoomedSerie === index
-    }
+    isZoomedSerie(index) {
+      return state.isZoomedSerie === index;
+    },
   },
-    }
+};
 </script>
 
 <style lang='scss' scoped>
-
 </style>

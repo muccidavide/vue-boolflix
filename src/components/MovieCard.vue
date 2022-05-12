@@ -42,7 +42,7 @@
             </li>
           </ul>
         </div>
-        <div class="genres ms-3">
+        <div v-if="genresMovies(index).length > 0" class="genres ms-3">
           <h5 class="fs-3">Genres:</h5>
           <ul>
             <li class="fs-5" v-for="genre in genresMovies(index)" :key="genre">
@@ -82,7 +82,7 @@
         />
       </div>
 
-      <div class="genres my-2">
+      <div v-if="genresMovies(index).length > 0" class="genres my-2">
         <h5>Genres:</h5>
         <ul>
           <li v-for="genre in genresMovies(index)" :key="genre">

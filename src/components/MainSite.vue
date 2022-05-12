@@ -8,8 +8,8 @@
           </div>
 
           <div class="btn_slider">
-            <button @click="cutMovie">Indietro</button>
-            <button class="ms-2" @click="addMovie">Avanti</button>
+            <button @click="cutMovie">Previous</button>
+            <button class="ms-2" @click="addMovie">Next</button>
           </div>
         </div>
         <!-- /.movie_nav -->
@@ -35,13 +35,13 @@
             <h2>Serie Tv</h2>
           </div>
           <div class="btn_slider">
-            <button @click="cutSerie">Indietro</button>
-            <button class="ms-2" @click="addSerie">Avanti</button>
+            <button @click="cutSerie">Previous</button>
+            <button class="ms-2" @click="addSerie">Next</button>
           </div>
         </div>
         <!-- /.series_nav -->
 
-        <div class="row g-3">
+        <div class="row g-3 mt-1">
           <SerieCard
             class="col_10" :index="index" :serie="serie"
             v-for="(serie, index) in filterSerie"
@@ -135,6 +135,11 @@ main {
   background-color: $nf-background-primary;
   color: $nf-text-secondary;
   min-height: calc(100vh - 100px);
+  button{
+    border: 1px solid white;
+    width: 100px;
+    font-size: 1.5rem;
+  }
   .row {
     flex-wrap: nowrap;
     overflow: hidden;
