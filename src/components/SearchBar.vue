@@ -47,7 +47,7 @@ export default {
   name: "SearchBar",
   data() {
     return {
-      selectedGenre:"",
+      selectedGenre:"All",
       filmSearched: "",
       genresList: [],
       movies: [],
